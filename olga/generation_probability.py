@@ -207,8 +207,9 @@ class GenerationProbability(object):
         6.8468778040965569e-10
             
         """
-        
-        V_usage_mask, J_usage_mask = self.format_usage_masks(V_usage_mask_in, J_usage_mask_in, print_warnings)
+
+        V_usage_mask, J_usage_mask, has_used_default_v_gene, has_used_default_j_gene = self.format_usage_masks(V_usage_mask_in, J_usage_mask_in, print_warnings)
+
         
         CDR3_seqs = self.list_seqs_from_regex(regex_seq, print_warnings, raise_overload_warning)
         
