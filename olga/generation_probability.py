@@ -266,10 +266,9 @@ class GenerationProbability(object):
                 if print_warnings:
                     print('Invalid amino acid CDR3 sequence --- unfamiliar symbol: ' + aa)
                 return 0    
+        V_usage_mask, J_usage_mask, has_used_default_v_gene, has_used_default_j_gene = self.format_usage_masks(V_usage_mask_in, J_usage_mask_in, print_warnings)
         
-        V_usage_mask, J_usage_mask = self.format_usage_masks(V_usage_mask_in, J_usage_mask_in, print_warnings)
-        
-        return self.compute_CDR3_pgen(CDR3_seq, V_usage_mask, J_usage_mask)
+        return self.compute_CDR3_pgen(CDR3_seq, V_usage_mask, J_usage_mask), has_used_default_v_gene, has_used_default_j_gene
     
     def compute_hamming_dist_1_pgen(self, CDR3_seq, V_usage_mask_in = None, J_usage_mask_in = None, print_warnings = True):
         """Compute Pgen of all seqs hamming dist 1 (in amino acids) from CDR3_seq.
@@ -418,6 +417,8 @@ class GenerationProbability(object):
         ([34, 18], [0])
             
         """
+        has_used_default_v_gene = False
+        has_used_default_j_gene = False
         #Format the V usage mask
         if isinstance(V_usage_mask_in, str):
             V_usage_mask_in = [V_usage_mask_in]
@@ -438,12 +439,14 @@ class GenerationProbability(object):
                 if print_warnings:
                     print('No recognized V genes/alleles. Using default V_usage_mask')
                 V_usage_mask = self.d_V_usage_mask
+                has_used_default_v_gene = True
             else:
                 V_usage_mask = list(e_V_usage_mask)
         else:
             if print_warnings:
                 print('Unfamiliar typed V usage mask: ' + str(V_usage_mask_in) + '. Using default V_usage_mask')
             V_usage_mask = self.d_V_usage_mask
+            has_used_default_v_gene = True
                 
                 
         #Format the J usage mask
@@ -466,14 +469,16 @@ class GenerationProbability(object):
                 if print_warnings:
                     print('No recognized J genes/alleles. Using default J_usage_mask')
                 J_usage_mask = self.d_J_usage_mask
+                has_used_default_j_gene = True
             else:
                 J_usage_mask = list(e_J_usage_mask)
         else:
             if print_warnings:
                 print('Unfamiliar typed J usage mask: ' + str(J_usage_mask_in) + '. Using default J_usage_mask')
             J_usage_mask = self.d_J_usage_mask
+            has_used_default_j_gene = True
                 
-        return V_usage_mask, J_usage_mask
+        return V_usage_mask, J_usage_mask, has_used_default_v_gene, has_used_default_j_gene
     
     def list_seqs_from_regex(self, regex_seq, print_warnings = True, raise_overload_warning = True):
         """List sequences that match regular expression template.
