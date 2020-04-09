@@ -260,7 +260,7 @@ class GenerationProbability(object):
             
         """
         if len(CDR3_seq) == 0:
-            return  0
+            return  0, False, False
         for aa in CDR3_seq:
             if aa not in self.codons_dict.keys():
                 #Check to make sure all symbols are accounted for
